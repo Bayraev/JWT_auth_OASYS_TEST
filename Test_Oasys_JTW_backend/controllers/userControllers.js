@@ -1,9 +1,10 @@
+const ApiError = require('../exception/apiError');
 const UserModel = require('../models/UserModel');
 const { authServices } = require('../services/authService');
 const jwt = require('jsonwebtoken');
 
 module.exports.userController = {
-  postUser: async (req, res) => {
+  postUser: async (req, res, next) => {
     try {
       const { nickname, password, lvl, type } = req.body;
 
@@ -15,6 +16,7 @@ module.exports.userController = {
       }
       const isNickameTaken = await authServices.isNickameFree(nickname);
       if (!isNickameTaken) {
+        return next(ApiError.BadRequest('Ошибка при валидации', [].push({ isNickameTaken })));
         return res.status(400).json({ error: 'This nickname already taken!' });
       }
       // type and lvl validation
@@ -45,7 +47,9 @@ module.exports.userController = {
       const user = await UserModel.create(userDataPrepared);
 
       res.status(200).json(user);
-    } catch (error) {}
+    } catch (error) {
+      next(error);
+    }
   },
 
   authUser: async (req, res) => {
@@ -84,6 +88,15 @@ module.exports.userController = {
           res.cookie('token', token).json(user);
         },
       );
+    }
+  },
+
+  getUsers: async (req, res) => {
+    try {
+      const users = await UserModel.find();
+      return res.status(200).json(users);
+    } catch (error) {
+      res.status(400).json({ error: error });
     }
   },
 };
