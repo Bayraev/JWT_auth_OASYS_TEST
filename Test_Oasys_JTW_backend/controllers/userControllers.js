@@ -1,5 +1,6 @@
 const UserModel = require('../models/UserModel');
 const { authServices } = require('../services/authService');
+const jwt = require('jsonwebtoken');
 
 module.exports.userController = {
   postUser: async (req, res) => {
@@ -57,11 +58,21 @@ module.exports.userController = {
       return res.status(400).json({ error: 'User not found!' });
     }
 
-    // compare pass and pass-hash
+    // compare pass and pass-hash. Sign jwt
     const match = await authServices.compareHash(password, user.password);
     if (!match) {
       return res.status(400).json({ error: 'Wrong password!' });
     }
-    return res.status(200).json({ match });
+    if (match) {
+      jwt.sign(
+        { nickname: user.nickname, _id: user._id },
+        process.env.JWT_SECRET,
+        {},
+        (error, token) => {
+          if (error) throw error;
+          res.cookie('token', token).json(user);
+        },
+      );
+    }
   },
 };
