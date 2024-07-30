@@ -5,9 +5,9 @@ const jwt = require('jsonwebtoken');
 module.exports.userController = {
   postUser: async (req, res) => {
     try {
-      const { nickname, password, lvl } = req.body;
+      const { nickname, password, lvl, type } = req.body;
 
-      // some validation
+      //* some validation
       // nickname validation
       const isNicknameOkay = authServices.isNicknameOkay(nickname);
       if (!isNicknameOkay) {
@@ -16,6 +16,15 @@ module.exports.userController = {
       const isNickameTaken = await authServices.isNickameFree(nickname);
       if (!isNickameTaken) {
         return res.status(400).json({ error: 'This nickname already taken!' });
+      }
+      // type and lvl validation
+      const isTypeOkay = authServices.isTypeOkay(type);
+      if (!isTypeOkay) {
+        return res.status(400).json({ error: 'You must have type admin(1) or user(2)!' });
+      }
+      const isLvlOkay = authServices.isLvlOkay(lvl, type);
+      if (!isLvlOkay) {
+        return res.status(400).json({ error: 'Yu have some lvl issues!' });
       }
       // password validation then hashing
       const isPasswordOkay = authServices.isPasswordOkay(password);
@@ -27,6 +36,8 @@ module.exports.userController = {
       const userDataPrepared = {
         nickname,
         password: passwordHash,
+        type,
+        lvl,
       };
       if (lvl) {
         userDataPrepared.lvl = lvl; // if we describe user lvl at the begin for yes.
