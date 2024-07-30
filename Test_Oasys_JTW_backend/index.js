@@ -13,6 +13,7 @@ const { MONGO_DB, PORT } = process.env; // info from env
 const app = express(); // express app init
 app.use(express.json({ extended: true })); // need this instead of body-parser (i actually dowloaded) //! WITHOUT THIS REQ.BODY IS UNDEFINED
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: false })); // url parsing (string to obj). Need "true" for nested ones.
 app.use(cors());
 app.use(morgan('dev'));
 app.use('/api', require('./routes/AuthRoutes'));
