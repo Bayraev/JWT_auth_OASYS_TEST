@@ -5,7 +5,6 @@ module.exports = async (req, _, next) => {
   try {
     // it must accept user id to get
     const { authorization } = req.headers;
-    console.log(1);
     if (!authorization) {
       return next(ApiError.UnauthorizedError());
     }
