@@ -7,7 +7,6 @@ const cookieParser = require('cookie-parser'); // managing cookies
 
 dotenv.config(); // Environment secret data
 
-//! temp
 const { MONGO_DB, PORT } = process.env; // info from env
 
 const app = express(); // express app init

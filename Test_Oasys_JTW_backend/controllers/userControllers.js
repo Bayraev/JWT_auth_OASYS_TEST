@@ -12,25 +12,25 @@ module.exports.userController = {
       // nickname validation
       const isNicknameOkay = authServices.isNicknameOkay(nickname);
       if (!isNicknameOkay) {
-        return res.status(400).json({ error: 'nickname required!' });
+        return next(ApiError.BadRequest('Необходимо ввести никнейм!'));
       }
       const isNickameTaken = await authServices.isNickameFree(nickname);
       if (!isNickameTaken) {
-        return res.status(400).json({ error: 'This nickname already taken!' });
+        return next(ApiError.BadRequest('Необходимо ввести никнейм!'));
       }
       // type and lvl validation
       const isTypeOkay = authServices.isTypeOkay(type);
       if (!isTypeOkay) {
-        return res.status(400).json({ error: 'You must have type admin(1) or user(2)!' });
+        return next(ApiError.BadRequest('Необходимо ввести никнейм!'));
       }
       const isLvlOkay = authServices.isLvlOkay(lvl, type);
       if (!isLvlOkay) {
-        return res.status(400).json({ error: 'Yu have some lvl issues!' });
+        return next(ApiError.BadRequest('Необходимо ввести никнейм!'));
       }
       // password validation then hashing
       const isPasswordOkay = authServices.isPasswordOkay(password);
       if (!isPasswordOkay) {
-        return res.status(400).json({ error: 'Password should be at least 6 characters!' });
+        return next(ApiError.BadRequest('Необходимо ввести никнейм!'));
       }
       const passwordHash = await authServices.hashData(password);
 
@@ -51,31 +51,31 @@ module.exports.userController = {
     }
   },
 
-  authUser: async (req, res) => {
+  authUser: async (req, res, next) => {
     const { nickname, password } = req.body;
 
     // some validation
     // nickname validation
     const isNicknameOkay = authServices.isNicknameOkay(nickname);
     if (!isNicknameOkay) {
-      return res.status(400).json({ error: 'nickname required!' });
+      return next(ApiError.BadRequest('Необходимо ввести никнейм!'));
     }
     // password validation then hashing
     const isPasswordOkay = authServices.isPasswordOkay(password);
     if (!isPasswordOkay) {
-      return res.status(400).json({ error: 'Password should be at least 6 characters!' });
+      return next(ApiError.BadRequest('Пароль должен быть хотя-бы 6 символов в длину!'));
     }
 
     // find user and validate
     const user = await UserModel.findOne({ nickname });
     if (!user) {
-      return res.status(400).json({ error: 'User not found!' });
+      return next(ApiError.BadRequest('Пользователь не обнаружен!'));
     }
 
     // compare pass and pass-hash. Sign jwt
     const match = await authServices.compareHash(password, user.password);
     if (!match) {
-      return res.status(400).json({ error: 'Wrong password!' });
+      return next(ApiError.BadRequest('Неправильный пароль!'));
     }
     if (match) {
       // DTO of user
