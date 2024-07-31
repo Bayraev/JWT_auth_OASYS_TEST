@@ -1,4 +1,4 @@
-const ApiError = require('../exception/apiError');
+const ApiError = require('../../exception/apiError');
 
 module.exports = async (req, res, next) => {
   try {

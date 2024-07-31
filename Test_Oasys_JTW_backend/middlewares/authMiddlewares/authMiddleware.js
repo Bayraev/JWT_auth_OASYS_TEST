@@ -1,5 +1,5 @@
-const ApiError = require('../exception/apiError');
-const { jwtService } = require('../services/tokenService');
+const ApiError = require('../../exception/apiError');
+const { jwtService } = require('../../services/tokenService');
 
 module.exports = async (req, _, next) => {
   try {
