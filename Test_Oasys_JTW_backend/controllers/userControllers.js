@@ -1,7 +1,8 @@
 const ApiError = require('../exception/apiError');
+const tokenModel = require('../models/tokenModel');
 const UserModel = require('../models/UserModel');
 const { authServices } = require('../services/authService');
-const jwt = require('jsonwebtoken');
+const { jwtService } = require('../services/tokenService');
 
 module.exports.userController = {
   postUser: async (req, res, next) => {
@@ -16,7 +17,6 @@ module.exports.userController = {
       }
       const isNickameTaken = await authServices.isNickameFree(nickname);
       if (!isNickameTaken) {
-        return next(ApiError.BadRequest('Ошибка при валидации', [].push({ isNickameTaken })));
         return res.status(400).json({ error: 'This nickname already taken!' });
       }
       // type and lvl validation
@@ -79,15 +79,22 @@ module.exports.userController = {
       return res.status(400).json({ error: 'Wrong password!' });
     }
     if (match) {
-      jwt.sign(
-        { nickname: user.nickname, _id: user._id },
-        process.env.JWT_SECRET,
-        {},
-        (error, token) => {
-          if (error) throw error;
-          res.cookie('token', token).json(user);
-        },
-      );
+      // DTO of user
+      const userDto = {
+        nickname: user.nickname,
+        _id: user._id,
+        type: user.type,
+        lvl: user.lvl,
+      };
+
+      const token = jwtService.generateToken(userDto);
+
+      await tokenModel.create({
+        user: user._id,
+        token: `${token}`,
+      });
+
+      res.cookie('token', token).json(user);
     }
   },
 
@@ -100,4 +107,3 @@ module.exports.userController = {
     }
   },
 };
-Ж;
