@@ -1,5 +1,4 @@
 const ApiError = require('../exception/apiError');
-const tokenModel = require('../models/tokenModel');
 const UserModel = require('../models/UserModel');
 const { authServices } = require('../services/authService');
 const { jwtService } = require('../services/tokenService');
@@ -88,11 +87,6 @@ module.exports.userController = {
       };
 
       const token = jwtService.generateToken(userDto);
-
-      await tokenModel.create({
-        user: user._id,
-        token: `${token}`,
-      });
 
       res.cookie('token', token).json(user);
     }
