@@ -126,4 +126,26 @@ module.exports.userController = {
       res.json(ApiError.BadRequest('Непредвиденная ошибка!'));
     }
   },
+  updUserById: async (req, res) => {
+    try {
+      const id = req.params.id; // search by id
+      const { nickname, balance, type, lvl } = req.body; // body dude
+
+      const payload = {}; // describing payload according data
+      nickname ? (payload.nickname = nickname) : null;
+      balance ? (payload.balance = balance) : null;
+      type ? (payload.type = type) : null;
+      lvl ? (payload.lvl = lvl) : null;
+
+      const user = await UserModel.findByIdAndUpdate(
+        id,
+        payload,
+        { new: true }, //return updated user in this variable
+      );
+
+      res.status(200).json({ user, changedField: payload });
+    } catch (error) {
+      res.json(ApiError.BadRequest('Непредвиденная ошибка!'));
+    }
+  },
 };
