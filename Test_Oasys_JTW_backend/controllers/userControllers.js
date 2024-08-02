@@ -96,6 +96,9 @@ module.exports.userController = {
   getUsers: async (_, res) => {
     try {
       const users = await UserModel.find();
+      users.map((user) => {
+        return (user.balance = null); // hide balance
+      });
       return res.status(200).json(users);
     } catch (error) {
       res.json(ApiError.BadRequest('Непредвиденная ошибка!'));
@@ -104,7 +107,8 @@ module.exports.userController = {
   getUserById: async (req, res) => {
     try {
       const id = req.params.id; // get id
-      const user = await UserModel.find({ _id: id }); // get user by id lol
+      const user = await UserModel.findOne({ _id: id }); // get user by id lol
+      user.balance = null; // hide balance as default
       res.status(200).json(user);
     } catch (error) {
       res.json(ApiError.BadRequest('Непредвиденная ошибка!'));
