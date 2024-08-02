@@ -2,10 +2,11 @@ import { LogIn } from 'lucide-react';
 import React, { useState } from 'react';
 import AuthComponent from './components/AuthComponent';
 import UsersComponent from './components/UsersComponent';
+import UpdUserComponent from './components/UpdUserComponent';
 
 function App() {
   const [selectedComponent, isSelectedComponent] = useState('users'); // shows selectedComponent
-  const [isEditingRn, setIsEditingRn] = useState(false); // shows are we opened window of edititng user
+  const [isEditingRn, setIsEditingRn] = useState(true); // shows are we opened window of edititng user
   return (
     <div className="flex justify-center">
       <div className="w-[70%]">
@@ -17,6 +18,7 @@ function App() {
           {/* Some routing system lmao, its landing rn */}
           {selectedComponent === 'auth' && <AuthComponent />}
           {selectedComponent === 'users' && <UsersComponent />}
+          {isEditingRn && <UpdUserComponent />}
         </main>
       </div>
     </div>
