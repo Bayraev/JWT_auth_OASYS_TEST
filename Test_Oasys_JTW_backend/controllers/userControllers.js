@@ -52,44 +52,48 @@ module.exports.userController = {
   },
 
   authUser: async (req, res, next) => {
-    const { nickname, password } = req.body;
+    try {
+      const { nickname, password } = req.body;
 
-    // some validation
-    // nickname validation
-    const isNicknameOkay = authServices.isNicknameOkay(nickname);
-    if (!isNicknameOkay) {
-      return next(ApiError.BadRequest('Необходимо ввести никнейм!'));
-    }
-    // password validation then hashing
-    const isPasswordOkay = authServices.isPasswordOkay(password);
-    if (!isPasswordOkay) {
-      return next(ApiError.BadRequest('Пароль должен быть хотя-бы 6 символов в длину!'));
-    }
+      // some validation
+      // nickname validation
+      const isNicknameOkay = authServices.isNicknameOkay(nickname);
+      if (!isNicknameOkay) {
+        return next(ApiError.BadRequest('Необходимо ввести никнейм!'));
+      }
+      // password validation then hashing
+      const isPasswordOkay = authServices.isPasswordOkay(password);
+      if (!isPasswordOkay) {
+        return next(ApiError.BadRequest('Пароль должен быть хотя-бы 6 символов в длину!'));
+      }
 
-    // find user and validate
-    const user = await UserModel.findOne({ nickname });
-    if (!user) {
-      return next(ApiError.BadRequest('Пользователь не обнаружен!'));
-    }
+      // find user and validate
+      const user = await UserModel.findOne({ nickname });
+      if (!user) {
+        return next(ApiError.BadRequest('Пользователь не обнаружен!'));
+      }
 
-    // compare pass and pass-hash. Sign jwt
-    const match = await authServices.compareHash(password, user.password);
-    if (!match) {
-      return next(ApiError.BadRequest('Неправильный пароль!'));
-    }
-    if (match) {
-      // DTO of user
-      const userDto = {
-        nickname: user.nickname,
-        _id: user._id,
-        type: user.type,
-        lvl: user.lvl,
-      };
+      // compare pass and pass-hash. Sign jwt
+      const match = await authServices.compareHash(password, user.password);
+      if (!match) {
+        return next(ApiError.BadRequest('Неправильный пароль!'));
+      }
+      if (match) {
+        // DTO of user
+        const userDto = {
+          nickname: user.nickname,
+          _id: user._id,
+          type: user.type,
+          lvl: user.lvl,
+        };
 
-      const token = jwtService.generateToken(userDto);
+        const token = jwtService.generateToken(userDto);
 
-      user.balance = null; // hide balance as default
-      res.cookie('token', token).json(user);
+        user.balance = null; // hide balance as default
+        res.cookie('token', token).json(user);
+      }
+    } catch (error) {
+      next(error);
     }
   },
 
