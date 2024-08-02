@@ -8,12 +8,16 @@ const cookieParser = require('cookie-parser'); // managing cookies
 dotenv.config(); // Environment secret data
 
 const { MONGO_DB, PORT } = process.env; // info from env
-
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  credentials: true, //access-control-allow-credentials:true
+  optionSuccessStatus: 200,
+};
 const app = express(); // express app init
 app.use(express.json({ extended: true })); // need this instead of body-parser (i actually dowloaded) //! WITHOUT THIS REQ.BODY IS UNDEFINED
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false })); // url parsing (string to obj). Need "true" for nested ones.
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(morgan('dev'));
 app.use('/api', require('./routes/AuthRoutes'));
 

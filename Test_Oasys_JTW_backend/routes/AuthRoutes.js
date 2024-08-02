@@ -9,12 +9,13 @@ const MiddlewareUser2_2 = require('../middlewares/authMiddlewares/MiddlewareUser
 const MiddlewareUser1_3 = require('../middlewares/authMiddlewares/MiddlewareUser1_3');
 
 // managing Cross-Oringin Policy
-router.use(
-  cors({
-    credentials: true, // allowing cookies and HTTP titles for auth
-    origin: '*', //! EVERYONE CAN SEND REQS YET
-  }),
-);
+// router.use(
+//   cors({
+//     credentials: true, // allowing cookies and HTTP titles for auth
+//     origin: 'http://localhost:3000',
+//     optionsSuccessStatus: 200,
+//   }),
+// );
 
 router.post('/registration', userController.postUser);
 router.post('/login', userController.authUser);
