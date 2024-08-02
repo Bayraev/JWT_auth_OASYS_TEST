@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { registration } from '../app/features/AuthSlice';
 import { IUser } from '../app/models/IUser';
 import { IRegCredentials } from '../app/models/IAuth';
+import { setSelectedComponent } from '../app/features/NavigationSlice';
 
 export default function AuthComponent() {
   const dispatch: AppDispatch = useDispatch();
@@ -29,10 +30,13 @@ export default function AuthComponent() {
       return alert('why password too short');
     }
     if (isRegistration === true) {
+      setIsRegistration(false);
       dispatch(registration(payload));
       return alert('registration');
     }
     if (isRegistration === false) {
+      setIsRegistration(true);
+      dispatch(setSelectedComponent('users'));
       return alert('authorization');
     }
   };

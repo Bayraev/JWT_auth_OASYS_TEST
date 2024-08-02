@@ -3,9 +3,11 @@ import React, { useState } from 'react';
 import AuthComponent from './components/AuthComponent';
 import UsersComponent from './components/UsersComponent';
 import UpdUserComponent from './components/UpdUserComponent';
+import { useSelector } from 'react-redux';
+import { RootState } from './app/store';
 
 function App() {
-  const [selectedComponent, isSelectedComponent] = useState('auth'); // shows selectedComponent
+  const selectedComponent = useSelector((state: RootState) => state.navigation.selectedComponent);
   const [isEditingRn, setIsEditingRn] = useState(true); // shows are we opened window of edititng user
   return (
     <div className="flex justify-center">
