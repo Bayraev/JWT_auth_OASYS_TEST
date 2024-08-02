@@ -5,7 +5,7 @@ import UsersComponent from './components/UsersComponent';
 import UpdUserComponent from './components/UpdUserComponent';
 
 function App() {
-  const [selectedComponent, isSelectedComponent] = useState('users'); // shows selectedComponent
+  const [selectedComponent, isSelectedComponent] = useState('auth'); // shows selectedComponent
   const [isEditingRn, setIsEditingRn] = useState(true); // shows are we opened window of edititng user
   return (
     <div className="flex justify-center">
@@ -18,7 +18,7 @@ function App() {
           {/* Some routing system lmao, its landing rn */}
           {selectedComponent === 'auth' && <AuthComponent />}
           {selectedComponent === 'users' && <UsersComponent />}
-          {isEditingRn && <UpdUserComponent />}
+          {/* {isEditingRn && <UpdUserComponent />} */}
         </main>
       </div>
     </div>

@@ -1,21 +1,35 @@
 import { ArrowLeftRight } from 'lucide-react';
 import React, { useState } from 'react';
+import { AppDispatch } from '../app/store';
+import { useDispatch } from 'react-redux';
+import { registration } from '../app/features/AuthSlice';
+import { IUser } from '../app/models/IUser';
+import { IRegCredentials } from '../app/models/IAuth';
 
 export default function AuthComponent() {
-  const [isRegistration, setIsRegistration] = useState(true);
-  const [nickname, setNickname] = useState('');
-  const [password, setPassword] = useState('');
-  const [type, setType] = useState(1); // admin(1) and user(2)
-  const [lvl, setLvl] = useState(1); // lvl 1,2 for user and 1,2,3 for admin
+  const dispatch: AppDispatch = useDispatch();
+
+  const [isRegistration, setIsRegistration] = useState<boolean>(true);
+  const [nickname, setNickname] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [type, setType] = useState<number>(1); // admin(1) and user(2)
+  const [lvl, setLvl] = useState<number>(1); // lvl 1,2 for user and 1,2,3 for admin
 
   const handleSubmit = () => {
-    if (nickname.length === 0) {
+    const payload: IRegCredentials = {
+      nickname,
+      password,
+      type,
+      lvl,
+    };
+    if (payload.nickname.length === 0) {
       return alert('why empty nickname');
     }
     if (password.length < 6) {
       return alert('why password too short');
     }
     if (isRegistration === true) {
+      dispatch(registration(payload));
       return alert('registration');
     }
     if (isRegistration === false) {
