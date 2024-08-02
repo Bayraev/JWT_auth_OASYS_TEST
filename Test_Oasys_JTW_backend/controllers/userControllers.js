@@ -44,7 +44,7 @@ module.exports.userController = {
         userDataPrepared.lvl = lvl; // if we describe user lvl at the begin for yes.
       }
       const user = await UserModel.create(userDataPrepared);
-
+      user.balance = null; // hide balance as default
       res.status(200).json(user);
     } catch (error) {
       next(error);
@@ -88,6 +88,7 @@ module.exports.userController = {
 
       const token = jwtService.generateToken(userDto);
 
+      user.balance = null; // hide balance as default
       res.cookie('token', token).json(user);
     }
   },
