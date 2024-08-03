@@ -4,3 +4,10 @@ export interface IRegCredentials {
   type: number;
   lvl: number;
 }
+
+export interface IAuthCredentials {
+  nickname: string;
+  password: string;
+}
+
+export type TRegAuthCredentials = IRegCredentials | IAuthCredentials;

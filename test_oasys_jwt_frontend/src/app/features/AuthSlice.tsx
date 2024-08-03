@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { IUser } from '../models/IUser';
-import { IRegCredentials } from '../models/IAuth';
+import { IAuthCredentials, IRegCredentials } from '../models/IAuth';
 import AuthService from '../services/AuthService';
+import Cookies from 'js-cookie';
 
 interface IInitialState {
   payload: IUser[];
@@ -26,7 +27,16 @@ export const registration = createAsyncThunk(
   async (credentials: IRegCredentials) => {
     credentials.nickname = credentials.nickname.toLowerCase(); // we dont want BIG CHARS
     const responce = await AuthService.registration(credentials);
-    console.log(responce.data);
+    return responce.data;
+  },
+);
+
+export const authorization = createAsyncThunk(
+  'auth/authorization',
+  async (credentials: IAuthCredentials) => {
+    credentials.nickname = credentials.nickname.toLowerCase(); // we dont want BIG CHARS
+    const responce = await AuthService.authorization(credentials);
+    const token = Cookies.get('token');
     return responce.data;
   },
 );
@@ -34,7 +44,11 @@ export const registration = createAsyncThunk(
 const AuthSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    logout: () => {
+      Cookies.remove('token');
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(registration.pending, (state, payload) => {
@@ -48,8 +62,24 @@ const AuthSlice = createSlice({
       .addCase(registration.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message ?? 'An error occurred.';
+      })
+
+      .addCase(authorization.pending, (state, payload) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(authorization.fulfilled, (state, action) => {
+        console.log(action);
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(authorization.rejected, (state, action) => {
+        state.loading = false;
+        alert(action.error.message);
+        state.error = action.error.message ?? 'An error occurred.';
       });
   },
 });
 
+export const { logout } = AuthSlice.actions;
 export default AuthSlice.reducer;

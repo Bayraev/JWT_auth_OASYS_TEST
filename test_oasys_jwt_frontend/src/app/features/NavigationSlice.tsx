@@ -1,6 +1,10 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-const initialState = {
+interface IInitialState {
+  selectedComponent: string;
+  editingPage: boolean;
+}
+const initialState: IInitialState = {
   selectedComponent: 'auth',
   editingPage: false,
 };
@@ -12,8 +16,11 @@ const NavigationSlice = createSlice({
     setSelectedComponent: (state, action: PayloadAction<string>) => {
       state.selectedComponent = action.payload;
     },
+    setEditingPage: (state) => {
+      state.editingPage = !state.editingPage;
+    },
   },
 });
 
-export const { setSelectedComponent } = NavigationSlice.actions;
+export const { setSelectedComponent, setEditingPage } = NavigationSlice.actions;
 export default NavigationSlice.reducer;
