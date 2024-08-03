@@ -1,16 +1,18 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IUser } from '../models/IUser';
 import { IAuthCredentials, IRegCredentials } from '../models/IAuth';
 import AuthService from '../services/AuthService';
 import Cookies from 'js-cookie';
 
 interface IInitialState {
+  currentUser: IUser | null;
   payload: IUser[];
   loading?: any;
   error?: any;
 }
 
 const initialState: IInitialState = {
+  currentUser: null,
   payload: [
     {
       nickname: '',
@@ -31,15 +33,11 @@ export const registration = createAsyncThunk(
   },
 );
 
-export const authorization = createAsyncThunk(
-  'auth/authorization',
-  async (credentials: IAuthCredentials) => {
-    credentials.nickname = credentials.nickname.toLowerCase(); // we dont want BIG CHARS
-    const responce = await AuthService.authorization(credentials);
-    const token = Cookies.get('token');
-    return responce.data;
-  },
-);
+export const authorization = createAsyncThunk('', async (credentials: IAuthCredentials) => {
+  credentials.nickname = credentials.nickname.toLowerCase(); // we dont want BIG CHARS
+  const responce = await AuthService.authorization(credentials);
+  return responce.data;
+});
 
 const AuthSlice = createSlice({
   name: 'auth',
@@ -48,6 +46,9 @@ const AuthSlice = createSlice({
     logout: () => {
       Cookies.remove('token');
     },
+    // actionGetMeUser: (state) => {
+    //   const user = JSON.parse(localStorage.getItem('user') || '{}');
+    // },
   },
   extraReducers: (builder) => {
     builder
@@ -68,8 +69,9 @@ const AuthSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(authorization.fulfilled, (state, action) => {
-        console.log(action);
+      .addCase(authorization.fulfilled, (state, action: PayloadAction<any>) => {
+        localStorage.setItem('user', JSON.stringify(action.payload));
+        state.currentUser = action.payload; //! khmmm
         state.loading = false;
         state.error = null;
       })

@@ -5,7 +5,7 @@ interface IInitialState {
   editingPage: boolean;
 }
 const initialState: IInitialState = {
-  selectedComponent: 'auth',
+  selectedComponent: 'users',
   editingPage: false,
 };
 

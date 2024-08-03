@@ -13,11 +13,8 @@ function App() {
   const dispatch: AppDispatch = useDispatch();
   const { selectedComponent, editingPage } = useSelector((state: RootState) => state.navigation);
 
-  useEffect(() => {
-    console.log(Cookies.get('token')); //! COOKIES ARE AVAILABLE
-  }, []);
-
   const authOrLeaveHandler = () => {
+    // WHEN WE GO TO LOGIN, WE LOGOUT BEFORE
     dispatch(logout());
     dispatch(setSelectedComponent('auth'));
   };
