@@ -1,13 +1,10 @@
 import { LogIn } from 'lucide-react';
-import React, { useEffect } from 'react';
+import React from 'react';
 import AuthComponent from './components/AuthComponent';
 import UsersComponent from './components/UsersComponent';
-import UpdUserComponent from './components/UpdUserComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from './app/store';
-import { setEditingPage, setSelectedComponent } from './app/features/NavigationSlice';
-import Cookies from 'js-cookie';
-import { getCurrentUserById, logout } from './app/features/AuthSlice';
+import { setSelectedComponent } from './app/features/NavigationSlice';
 
 function App() {
   const dispatch: AppDispatch = useDispatch();
@@ -18,15 +15,6 @@ function App() {
     // WHEN WE GO TO LOGIN, WE LOGOUT BEFORE
     dispatch(setSelectedComponent('auth'));
   };
-
-  useEffect(() => {
-    console.log(Cookies.get('token'));
-    const currentUserId: string | any = localStorage.getItem('currentUserId');
-    if (currentUserId && typeof currentUserId === typeof '') {
-      console.log(currentUserId);
-      dispatch(getCurrentUserById(currentUserId));
-    }
-  }, []);
 
   return (
     <div className="flex justify-center">

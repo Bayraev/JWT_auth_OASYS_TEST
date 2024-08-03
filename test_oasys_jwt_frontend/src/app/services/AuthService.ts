@@ -18,7 +18,7 @@ export default class AuthService {
     return $api.get(`/users/${id}`);
   }
 
-  // static async getUsers(id: string): Promise<AxiosResponse<IUser>> {
-  //   return $api.get(`/users/`);
-  // }
+  static async getUsers(): Promise<AxiosResponse<IUser>> {
+    return $api.get(`/users/`);
+  }
 }

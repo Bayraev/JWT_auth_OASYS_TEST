@@ -6,14 +6,14 @@ import Cookies from 'js-cookie';
 
 interface IInitialState {
   currentUser: IUser | null;
-  payload: IUser[];
+  users: IUser[];
   loading?: any;
   error?: any;
 }
 
 const initialState: IInitialState = {
   currentUser: null,
-  payload: [
+  users: [
     {
       _id: '',
       nickname: '',
@@ -50,6 +50,13 @@ export const getCurrentUserById = createAsyncThunk(
   },
 );
 
+export const getUsers = createAsyncThunk('auth/getUsers', async () => {
+  // Credentials (cookies) included
+  const responce = await AuthService.getUsers();
+  alert('getUsers');
+  return responce.data;
+});
+
 const AuthSlice = createSlice({
   name: 'auth',
   initialState,
@@ -82,7 +89,6 @@ const AuthSlice = createSlice({
       })
       .addCase(authorization.fulfilled, (state, action: PayloadAction<any>) => {
         localStorage.setItem('currentUserId', action.payload._id);
-        console.log(action.payload);
         state.currentUser = action.payload; //! khmmm
         state.loading = false;
         state.error = null;
@@ -99,12 +105,27 @@ const AuthSlice = createSlice({
         state.error = null;
       })
       .addCase(getCurrentUserById.fulfilled, (state, action: PayloadAction<any>) => {
-        console.log('getCurrentUserById', action.payload);
         state.currentUser = action.payload; //! khmmm
         state.loading = false;
         state.error = null;
       })
       .addCase(getCurrentUserById.rejected, (state, action) => {
+        state.loading = false;
+        alert(action.error.message);
+        state.error = action.error.message ?? 'An error occurred.';
+      })
+
+      //* getUsers
+      .addCase(getUsers.pending, (state, payload) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getUsers.fulfilled, (state, action: PayloadAction<any>) => {
+        state.users = action.payload.map((user: IUser) => user); //! khmmm
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(getUsers.rejected, (state, action) => {
         state.loading = false;
         alert(action.error.message);
         state.error = action.error.message ?? 'An error occurred.';
