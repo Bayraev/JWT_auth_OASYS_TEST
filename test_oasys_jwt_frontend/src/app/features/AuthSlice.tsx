@@ -3,12 +3,15 @@ import { IUser } from '../models/IUser';
 import { IAuthCredentials, IRegCredentials } from '../models/IAuth';
 import AuthService from '../services/AuthService';
 import Cookies from 'js-cookie';
+import { sleep, unshiftAfterMs } from '../tools/asyncTools';
+import { AppDispatch } from '../store';
+import { useDispatch } from 'react-redux';
 
 interface IInitialState {
   currentUser: IUser | null;
   users: IUser[];
   loading?: any;
-  error?: any;
+  error: any;
 }
 
 const initialState: IInitialState = {
@@ -23,6 +26,7 @@ const initialState: IInitialState = {
       balance: 0,
     },
   ],
+  error: [],
 };
 
 export const registration = createAsyncThunk(
@@ -57,6 +61,14 @@ export const getUsers = createAsyncThunk('auth/getUsers', async () => {
   return responce.data;
 });
 
+//* handler for addCases (rejection)
+// export const handleRejected = (message: string) => (dispatch: AppDispatch) => {
+//   dispatch(addError(message));
+//   setTimeout(() => {
+//     dispatch(removeError());
+//   }, 500);
+// };
+
 const AuthSlice = createSlice({
   name: 'auth',
   initialState,
@@ -67,6 +79,13 @@ const AuthSlice = createSlice({
       state.currentUser = null;
       state.users.splice(0, state.users.length);
     },
+    addError: (state, action: PayloadAction<string>) => {
+      state.error.push(action.payload);
+    },
+    removeError: (state) => {
+      state.error.pop();
+    },
+
     // actionGetMeUser: (state) => {
     //   const user = JSON.parse(localStorage.getItem('user') || '{}');
     // },
@@ -75,66 +94,64 @@ const AuthSlice = createSlice({
     builder
       .addCase(registration.pending, (state, payload) => {
         state.loading = true;
-        state.error = null;
+        state.error.splice(0, state.error.length);
       })
       .addCase(registration.fulfilled, (state, action) => {
         state.loading = false;
-        state.error = null;
+        state.error.splice(0, state.error.length);
       })
       .addCase(registration.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message ?? 'An error occurred.';
+        state.error.push(action.error.message);
       })
 
       .addCase(authorization.pending, (state, payload) => {
         state.loading = true;
-        state.error = null;
+        state.error.splice(0, state.error.length);
       })
       .addCase(authorization.fulfilled, (state, action: PayloadAction<any>) => {
         localStorage.setItem('currentUserId', action.payload._id);
         state.currentUser = action.payload; //! khmmm
         state.loading = false;
-        state.error = null;
+        state.error.splice(0, state.error.length);
       })
       .addCase(authorization.rejected, (state, action) => {
         state.loading = false;
         alert(action.error.message);
-        state.error = action.error.message ?? 'An error occurred.';
+        state.error.push(action.error.message);
       })
 
       //* getCurrentUserById
       .addCase(getCurrentUserById.pending, (state, payload) => {
         state.loading = true;
-        state.error = null;
+        state.error.splice(0, state.error.length);
       })
       .addCase(getCurrentUserById.fulfilled, (state, action: PayloadAction<any>) => {
         state.currentUser = action.payload; //! khmmm
         state.loading = false;
-        state.error = null;
+        state.error.splice(0, state.error.length);
       })
       .addCase(getCurrentUserById.rejected, (state, action) => {
         state.loading = false;
-        alert(action.error.message);
-        state.error = action.error.message ?? 'An error occurred.';
+        state.error.push(action.error.message);
       })
 
       //* getUsers
       .addCase(getUsers.pending, (state, payload) => {
         state.loading = true;
-        state.error = null;
+        state.error.splice(0, state.error.length);
       })
       .addCase(getUsers.fulfilled, (state, action: PayloadAction<any>) => {
         state.users = action.payload.map((user: IUser) => user); //! khmmm
         state.loading = false;
-        state.error = null;
+        state.error.splice(0, state.error.length);
       })
       .addCase(getUsers.rejected, (state, action) => {
         state.loading = false;
-        alert(action.error.message);
-        state.error = action.error.message ?? 'An error occurred.';
+        state.error.push(action.error.message);
       });
   },
 });
 
-export const { logout } = AuthSlice.actions;
+export const { logout, removeError } = AuthSlice.actions;
 export default AuthSlice.reducer;

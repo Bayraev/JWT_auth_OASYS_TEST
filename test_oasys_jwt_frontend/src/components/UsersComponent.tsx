@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../app/store';
 import { getCurrentUserById, getUsers } from '../app/features/AuthSlice';
@@ -10,7 +10,7 @@ export default function UsersComponent() {
   const { currentUser, users } = useSelector((state: RootState) => state.authorization);
 
   //* Getting Current User
-  useEffect(() => {
+  useLayoutEffect(() => {
     console.log(Cookies.get('token'));
     const currentUserId: string | any = localStorage.getItem('currentUserId');
     if (currentUserId && typeof currentUserId === typeof '') {
