@@ -1,18 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../app/store';
-import Cookies from 'js-cookie';
-import { setSelectedComponent } from '../app/features/NavigationSlice';
 
 export default function UsersComponent() {
   const dispatch: AppDispatch = useDispatch();
   const { currentUser } = useSelector((state: RootState) => state.authorization);
-
-  // if we have user in localstorage and cookie we show it
-
-  // useEffect(() => {
-
-  // }, [currentUser])
 
   return (
     <div className="p-20">

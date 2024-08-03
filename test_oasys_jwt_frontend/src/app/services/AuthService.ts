@@ -13,4 +13,12 @@ export default class AuthService {
     const { nickname, password } = credentials;
     return $api.post('/login', { nickname, password });
   }
+
+  static async getCurrentUserById(id: string): Promise<AxiosResponse<IUser>> {
+    return $api.get(`/users/${id}`);
+  }
+
+  // static async getUsers(id: string): Promise<AxiosResponse<IUser>> {
+  //   return $api.get(`/users/`);
+  // }
 }

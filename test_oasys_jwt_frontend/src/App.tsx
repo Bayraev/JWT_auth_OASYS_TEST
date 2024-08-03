@@ -7,17 +7,26 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from './app/store';
 import { setEditingPage, setSelectedComponent } from './app/features/NavigationSlice';
 import Cookies from 'js-cookie';
-import { logout } from './app/features/AuthSlice';
+import { getCurrentUserById, logout } from './app/features/AuthSlice';
 
 function App() {
   const dispatch: AppDispatch = useDispatch();
   const { selectedComponent, editingPage } = useSelector((state: RootState) => state.navigation);
+  const { currentUser } = useSelector((state: RootState) => state.authorization);
 
   const authOrLeaveHandler = () => {
     // WHEN WE GO TO LOGIN, WE LOGOUT BEFORE
-    dispatch(logout());
     dispatch(setSelectedComponent('auth'));
   };
+
+  useEffect(() => {
+    console.log(Cookies.get('token'));
+    const currentUserId: string | any = localStorage.getItem('currentUserId');
+    if (currentUserId && typeof currentUserId === typeof '') {
+      console.log(currentUserId);
+      dispatch(getCurrentUserById(currentUserId));
+    }
+  }, []);
 
   return (
     <div className="flex justify-center">

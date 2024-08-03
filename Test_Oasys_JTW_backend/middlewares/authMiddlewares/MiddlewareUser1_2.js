@@ -1,7 +1,9 @@
 const ApiError = require('../../exception/apiError');
 
 module.exports = async (req, res, next) => {
-  if (req.gotAccess === true) next(); // if we have access no need to read this middleware
+  if (req.gotAccess === true) {
+    return next();
+  } // if we have access no need to read this middleware
 
   const user = req.userData;
 
@@ -12,7 +14,7 @@ module.exports = async (req, res, next) => {
     req.gotAccess = true; //* Marker that we got access
   }
   if (!req.gotAccess) {
-    next(ApiError.PermissionDenied());
+    return next(ApiError.PermissionDenied());
   }
 
   next();

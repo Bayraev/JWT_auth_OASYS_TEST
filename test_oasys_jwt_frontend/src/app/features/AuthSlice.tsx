@@ -15,6 +15,7 @@ const initialState: IInitialState = {
   currentUser: null,
   payload: [
     {
+      _id: '',
       nickname: '',
       password: '',
       type: 1,
@@ -38,6 +39,16 @@ export const authorization = createAsyncThunk('', async (credentials: IAuthCrede
   const responce = await AuthService.authorization(credentials);
   return responce.data;
 });
+
+export const getCurrentUserById = createAsyncThunk(
+  'auth/getCurrentUserById',
+  async (idToSearch: string) => {
+    // Credentials (cookies) included
+    const responce = await AuthService.getCurrentUserById(idToSearch);
+    alert('done');
+    return responce.data;
+  },
+);
 
 const AuthSlice = createSlice({
   name: 'auth',
@@ -70,12 +81,30 @@ const AuthSlice = createSlice({
         state.error = null;
       })
       .addCase(authorization.fulfilled, (state, action: PayloadAction<any>) => {
-        localStorage.setItem('user', JSON.stringify(action.payload));
+        localStorage.setItem('currentUserId', action.payload._id);
+        console.log(action.payload);
         state.currentUser = action.payload; //! khmmm
         state.loading = false;
         state.error = null;
       })
       .addCase(authorization.rejected, (state, action) => {
+        state.loading = false;
+        alert(action.error.message);
+        state.error = action.error.message ?? 'An error occurred.';
+      })
+
+      //* getCurrentUserById
+      .addCase(getCurrentUserById.pending, (state, payload) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getCurrentUserById.fulfilled, (state, action: PayloadAction<any>) => {
+        console.log('getCurrentUserById', action.payload);
+        state.currentUser = action.payload; //! khmmm
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(getCurrentUserById.rejected, (state, action) => {
         state.loading = false;
         alert(action.error.message);
         state.error = action.error.message ?? 'An error occurred.';
