@@ -61,8 +61,11 @@ const AuthSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    logout: () => {
+    logout: (state) => {
       Cookies.remove('token');
+
+      state.currentUser = null;
+      state.users.splice(0, state.users.length);
     },
     // actionGetMeUser: (state) => {
     //   const user = JSON.parse(localStorage.getItem('user') || '{}');
