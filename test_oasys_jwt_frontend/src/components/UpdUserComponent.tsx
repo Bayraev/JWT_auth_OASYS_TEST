@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../app/store';
 import { IUser } from '../app/models/IUser';
-import { deselectUser, editSelectedUser, updUser } from '../app/features/AuthSlice';
+import { deselectUser, editSelectedUser, updUser } from '../app/features/UserSlice';
 import { setEditingPage } from '../app/features/NavigationSlice';
 import { deletePropertyFromObj } from '../app/tools/tools';
 

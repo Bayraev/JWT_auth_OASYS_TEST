@@ -5,9 +5,10 @@ import UsersComponent from './components/UsersComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from './app/store';
 import { setSelectedComponent } from './app/features/NavigationSlice';
-import { logout, removeError } from './app/features/AuthSlice';
+import { logout } from './app/features/AuthSlice';
 import { sleep } from './app/tools/asyncTools';
 import UpdUserComponent from './components/UpdUserComponent';
+import { removeError } from './app/features/UserSlice';
 
 function App() {
   const dispatch: AppDispatch = useDispatch();

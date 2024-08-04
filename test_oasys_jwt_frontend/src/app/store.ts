@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import AuthSlice from './features/AuthSlice';
 import NavigationSlice from './features/NavigationSlice';
+import UserSlice from './features/UserSlice';
 
 export const store = configureStore({
   reducer: {
     authorization: AuthSlice,
+    users: UserSlice,
     navigation: NavigationSlice,
   },
 });

@@ -6,7 +6,7 @@ import {
   getUserBalance,
   getUsers,
   selectUser,
-} from '../app/features/AuthSlice';
+} from '../app/features/UserSlice';
 import Cookies from 'js-cookie';
 import { IUser } from '../app/models/IUser';
 import { setEditingPage } from '../app/features/NavigationSlice';
@@ -14,7 +14,7 @@ import { Pen } from 'lucide-react';
 
 export default function UsersComponent() {
   const dispatch: AppDispatch = useDispatch();
-  const { currentUser, users } = useSelector((state: RootState) => state.authorization);
+  const { currentUser, users } = useSelector((state: RootState) => state.users);
 
   //* Getting Current User
   useLayoutEffect(() => {
