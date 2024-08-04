@@ -124,10 +124,9 @@ module.exports.userController = {
   getBalanceByid: async (req, res) => {
     try {
       const id = req.params.id; // get id for search user and his balance
-      const user = await UserModel.find({ _id: id });
-      const userBalance = user[0].balance;
+      const user = await UserModel.findOne({ _id: id });
 
-      return res.status(200).json(userBalance);
+      return res.status(200).json({ _id: user._id, balance: user.balance });
     } catch (error) {
       res.json(ApiError.BadRequest('Непредвиденная ошибка!'));
     }
@@ -149,7 +148,7 @@ module.exports.userController = {
         { new: true }, //return updated user in this variable
       );
 
-      res.status(200).json({ user, changedField: payload });
+      res.status(200).json(user);
     } catch (error) {
       res.json(ApiError.BadRequest('Непредвиденная ошибка!'));
     }

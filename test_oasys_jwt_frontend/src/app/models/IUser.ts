@@ -7,3 +7,5 @@ export interface IUser {
   lvl: number;
   balance?: number;
 }
+
+export type TUserWithoutPassword = Omit<IUser, 'password'>;

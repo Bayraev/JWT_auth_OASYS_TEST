@@ -7,6 +7,7 @@ import { AppDispatch, RootState } from './app/store';
 import { setSelectedComponent } from './app/features/NavigationSlice';
 import { logout, removeError } from './app/features/AuthSlice';
 import { sleep } from './app/tools/asyncTools';
+import UpdUserComponent from './components/UpdUserComponent';
 
 function App() {
   const dispatch: AppDispatch = useDispatch();
@@ -51,7 +52,7 @@ function App() {
             {/* Some routing system lmao, its landing rn */}
             {selectedComponent === 'auth' && <AuthComponent />}
             {selectedComponent === 'users' && <UsersComponent />}
-            {/* {editingPage && <UpdUserComponent />} */}
+            {editingPage && <UpdUserComponent />}
           </main>
         </div>
       </div>
