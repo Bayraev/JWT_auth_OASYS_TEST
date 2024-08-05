@@ -36,7 +36,7 @@ const AuthSlice = createSlice({
     removeError: (state) => {
       state.error.pop();
     },
-    logout: (state) => {
+    logout: () => {
       Cookies.remove('token');
       localStorage.removeItem('currentUserId');
     },
@@ -63,7 +63,6 @@ const AuthSlice = createSlice({
       })
       .addCase(authorization.rejected, (state, action) => {
         state.loading = false;
-        alert(action.error.message);
         state.error.push(action.error.message);
       });
   },

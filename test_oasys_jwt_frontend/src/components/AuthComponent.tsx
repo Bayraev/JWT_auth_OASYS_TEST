@@ -17,12 +17,6 @@ export default function AuthComponent() {
   const [lvl, setLvl] = useState<number>(1); // lvl 1,2 for user and 1,2,3 for admin
 
   const handleSubmit = () => {
-    // if (nickname.length === 0) {
-    //   return alert('why empty nickname');
-    // }
-    // if (password.length < 6) {
-    //   return alert('why password too short');
-    // }
     if (isRegistration === true) {
       const credentials: IRegCredentials = {
         nickname,
@@ -33,7 +27,6 @@ export default function AuthComponent() {
 
       setIsRegistration(false);
       dispatch(registration(credentials));
-      return alert('registration');
     }
     if (isRegistration === false) {
       const credentials: IAuthCredentials = {
@@ -44,7 +37,6 @@ export default function AuthComponent() {
       setIsRegistration(true);
       dispatch(setSelectedComponent('users'));
       dispatch(authorization(credentials));
-      return alert('authorization');
     }
   };
 

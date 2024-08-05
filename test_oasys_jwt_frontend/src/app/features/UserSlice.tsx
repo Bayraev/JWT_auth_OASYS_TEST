@@ -41,7 +41,6 @@ export const getUserBalance = createAsyncThunk(
 );
 
 export const updUser = createAsyncThunk('user/updUser', async (user: IUser) => {
-  console.log(user.password);
   const responce = await UserService.updUser(user);
   return responce.data;
 });

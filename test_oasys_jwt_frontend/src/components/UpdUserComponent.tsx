@@ -33,23 +33,7 @@ export default function UpdUserComponent({}: Props) {
   const handleSubmit = () => {
     let user = selectedUser as IUser; // we do this for editing with no state-mutation
 
-    try {
-      //* some validatoin before submit
-      // if (user.nickname.length === 0) {
-      //   return alert('Fill that nickname cuhh');
-      // }
-      // if (user.password && user.password.length < 6 && user.password.length !== 0) {
-      //   return alert('Bro pass need at least 8 chars');
-      // }
-      // //* Validation. Backend is dont save data that doesnt exist, the reason we do this to dont save it lol
-      // if (user.password && user.password.length === 0) {
-      //   user = deletePropertyFromObj(user, user.password);
-      // }
-
-      return dispatch(updUser(user));
-    } catch (error) {
-      return alert('some bullshit happend with context meny dude');
-    }
+    return dispatch(updUser(user));
   };
 
   //* here we edit currentUser
