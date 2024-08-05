@@ -59,6 +59,8 @@ const AuthSlice = createSlice({
       })
       .addCase(authorization.fulfilled, (state, action: PayloadAction<any>) => {
         localStorage.setItem('currentUserId', action.payload._id);
+        alert('s');
+
         state.loading = false;
       })
       .addCase(authorization.rejected, (state, action) => {

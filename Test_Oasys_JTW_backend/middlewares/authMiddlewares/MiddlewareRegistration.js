@@ -25,7 +25,6 @@ module.exports = async (req, res, next) => {
   }
   // password validation then hashing if we have it (if we dont, we dont update pass)
   const isPasswordOkay = authServices.isPasswordOkay(password);
-  console.log('isPasswordOkay; ', isPasswordOkay);
   let passwordHash = null;
   if (isPasswordOkay) {
     passwordHash = await authServices.hashData(password);

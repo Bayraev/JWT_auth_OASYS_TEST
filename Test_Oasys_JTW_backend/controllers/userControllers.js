@@ -8,7 +8,6 @@ module.exports.userController = {
     try {
       const { nickname, lvl, type, passwordHash } = req.body;
 
-      console.log(passwordHash);
       const userDataPrepared = {
         nickname,
         password: passwordHash,
@@ -29,7 +28,6 @@ module.exports.userController = {
   authUser: async (req, res, next) => {
     try {
       const { user, match } = req.body;
-
       // some validation
       if (match) {
         // DTO of user
@@ -41,7 +39,6 @@ module.exports.userController = {
         };
 
         const token = jwtService.generateToken(userDto);
-
         user.balance = null; // hide balance as default
         res.cookie('token', token).json(user);
       }
@@ -63,9 +60,7 @@ module.exports.userController = {
   },
   getUserById: async (req, res) => {
     try {
-      console.log('marker');
       const id = req.params.id; // get id
-      console.log('marker');
 
       const user = await UserModel.findOne({ _id: id }); // get user by id lol
       user.balance = null; // hide balance as default

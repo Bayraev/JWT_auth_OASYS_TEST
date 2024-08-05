@@ -28,8 +28,8 @@ module.exports = async (req, res, next) => {
     return next(ApiError.BadRequest('Неправильный пароль!'));
   }
 
-  req.match = match;
-  req.user = user;
+  req.body.match = match;
+  req.body.user = user;
 
   next();
 };
