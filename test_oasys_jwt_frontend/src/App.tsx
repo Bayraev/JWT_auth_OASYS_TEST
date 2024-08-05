@@ -5,40 +5,48 @@ import UsersComponent from './components/UsersComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from './app/store';
 import { setSelectedComponent } from './app/features/NavigationSlice';
-import { logout } from './app/features/AuthSlice';
+import { logout, removeError as authRemoveError } from './app/features/AuthSlice';
 import { sleep } from './app/tools/asyncTools';
 import UpdUserComponent from './components/UpdUserComponent';
-import { removeError } from './app/features/UserSlice';
+import { clearAfterLogout, removeError as userRemoveError } from './app/features/UserSlice';
 
 function App() {
   const dispatch: AppDispatch = useDispatch();
+  //* Navigation
   const { selectedComponent, editingPage } = useSelector((state: RootState) => state.navigation);
-  const { currentUser, error } = useSelector((state: RootState) => state.authorization);
-  let errorCleanTimer: number = 0;
+  //* User logic
+  const { error: userError } = useSelector((state: RootState) => state.users);
+  //* Auth logic
+  const { error: authError } = useSelector((state: RootState) => state.authorization);
+
+  // logout and login button handler
   const authOrLeaveHandler = () => {
-    // WHEN WE GO TO LOGIN, WE LOGOUT BEFORE
+    // when we want log in, we logout automatically
     dispatch(logout());
+    dispatch(clearAfterLogout());
     dispatch(setSelectedComponent('auth'));
   };
 
+  //* Clean error arr
   useEffect(() => {
     (async () => {
-      const currentErrorState = error;
       await sleep(3000);
-
-      dispatch(removeError());
+      dispatch(userRemoveError());
+      dispatch(authRemoveError());
     })();
-
-    // setTimeout(() => {
-    //   errorCleanTimer ===
-    // }, 3000);
-  }, [error]);
+  }, [userError, authError]);
 
   return (
     <>
-      {error.map((el: any) => (
+      {userError.map((el: any) => (
+        // errors field
         <div className="flex justify-center p-2 bg-red-600">ERROR: {el}</div>
       ))}
+      {authError.map((el: any) => (
+        // errors field
+        <div className="flex justify-center p-2 bg-red-600">ERROR: {el}</div>
+      ))}
+
       <div className="flex justify-center h-full">
         <div className="w-[70%] h-full">
           <header className="flex justify-between bg-slate-600 p-2 text-3xl">

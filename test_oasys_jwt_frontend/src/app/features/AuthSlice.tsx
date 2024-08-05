@@ -5,17 +5,12 @@ import AuthService from '../services/AuthService';
 import Cookies from 'js-cookie';
 
 interface IInitialState {
-  currentUser: IUser | null;
-  selectedUser: IUser | null;
-  users: IUser[];
-  loading?: any;
+  loading: any;
   error: any;
 }
 
 const initialState: IInitialState = {
-  currentUser: null,
-  selectedUser: null,
-  users: [],
+  loading: [],
   error: [],
 };
 
@@ -38,11 +33,12 @@ const AuthSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    removeError: (state) => {
+      state.error.pop();
+    },
     logout: (state) => {
       Cookies.remove('token');
-
-      state.currentUser = null;
-      state.users.splice(0, state.users.length);
+      localStorage.removeItem('currentUserId');
     },
   },
   extraReducers: (builder) => {
@@ -63,7 +59,6 @@ const AuthSlice = createSlice({
       })
       .addCase(authorization.fulfilled, (state, action: PayloadAction<any>) => {
         localStorage.setItem('currentUserId', action.payload._id);
-        state.currentUser = action.payload; //! khmmm
         state.loading = false;
       })
       .addCase(authorization.rejected, (state, action) => {
@@ -74,5 +69,5 @@ const AuthSlice = createSlice({
   },
 });
 
-export const { logout } = AuthSlice.actions;
+export const { logout, removeError } = AuthSlice.actions;
 export default AuthSlice.reducer;

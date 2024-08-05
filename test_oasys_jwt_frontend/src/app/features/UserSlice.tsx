@@ -22,7 +22,6 @@ export const getCurrentUserById = createAsyncThunk(
   async (idToSearch: string) => {
     // Credentials (cookies) included
     const responce = await UserService.getCurrentUserById(idToSearch);
-    alert('done');
     return responce.data;
   },
 );
@@ -30,7 +29,6 @@ export const getCurrentUserById = createAsyncThunk(
 export const getUsers = createAsyncThunk('user/getUsers', async () => {
   // Credentials (cookies) included
   const responce = await UserService.getUsers();
-  alert('getUsers');
   return responce.data;
 });
 
@@ -43,7 +41,7 @@ export const getUserBalance = createAsyncThunk(
 );
 
 export const updUser = createAsyncThunk('user/updUser', async (user: IUser) => {
-  alert(user._id);
+  console.log(user.password);
   const responce = await UserService.updUser(user);
   return responce.data;
 });
@@ -55,7 +53,6 @@ const UserSlice = createSlice({
     removeError: (state) => {
       state.error.pop();
     },
-
     selectUser: (state, action: PayloadAction<IUser>) => {
       state.selectedUser = action.payload;
     },
@@ -71,10 +68,13 @@ const UserSlice = createSlice({
         state.selectedUser[key] = value as never;
       }
     },
+    clearAfterLogout: (state) => {
+      state.users.splice(0, state.users.length);
+      state.currentUser = null;
+    },
   },
   extraReducers: (builder) => {
     builder
-
       //* getCurrentUserById
       .addCase(getCurrentUserById.pending, (state, action) => {
         state.loading = true;
@@ -102,7 +102,6 @@ const UserSlice = createSlice({
       })
 
       //* getBalance
-      //* getUsers
       .addCase(getUserBalance.pending, (state, action) => {
         state.loading = true;
       })
@@ -110,18 +109,23 @@ const UserSlice = createSlice({
         getUserBalance.fulfilled,
         (state, action: PayloadAction<{ _id: string; balance: number }>) => {
           const { _id, balance } = action.payload;
+          const { currentUser, selectedUser, users } = state;
 
-          if (state.currentUser?._id === _id) {
-            state.currentUser.balance = balance;
+          //* for current user
+          if (currentUser?._id === _id) {
+            currentUser.balance = balance;
           }
 
-          // check all users to show balance
+          //* for selected user
+          if (selectedUser?._id === _id) {
+            selectedUser.balance = balance;
+          }
+
+          //* in all users find one
           state.users = state.users.map((user) => {
             if (user._id === _id) user.balance = balance; // if equal user and payload we change the balance
             return user;
           });
-
-          console.log(action.payload);
           state.loading = false;
         },
       )
@@ -143,10 +147,8 @@ const UserSlice = createSlice({
 
         // check all users to show balance
         state.users = state.users.map((user) => {
-          console.log(action.payload);
           if (user._id === _id) {
             user = { ...action.payload };
-            console.log(user);
           } // if equal user and payload we change the balance
           return user;
         });
@@ -160,5 +162,6 @@ const UserSlice = createSlice({
   },
 });
 
-export const { removeError, selectUser, deselectUser, editSelectedUser } = UserSlice.actions;
+export const { removeError, selectUser, deselectUser, editSelectedUser, clearAfterLogout } =
+  UserSlice.actions;
 export default UserSlice.reducer;

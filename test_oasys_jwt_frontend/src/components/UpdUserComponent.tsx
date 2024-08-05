@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../app/store';
 import { IUser } from '../app/models/IUser';
-import { deselectUser, editSelectedUser, updUser } from '../app/features/UserSlice';
+import { deselectUser, editSelectedUser, getUserBalance, updUser } from '../app/features/UserSlice';
 import { setEditingPage } from '../app/features/NavigationSlice';
 import { deletePropertyFromObj } from '../app/tools/tools';
 
@@ -10,36 +10,69 @@ type Props = {};
 
 export default function UpdUserComponent({}: Props) {
   const dispatch: AppDispatch = useDispatch();
-  // const [nickname, setNickname] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  // const [type, setType] = useState<number>(1); // admin(1) and user(2)
-  // const [lvl, setLvl] = useState<number>(1); // lvl 1,2 for user and 1,2,3 for admin
 
-  const selectedUser: IUser | any = useSelector(
-    (state: RootState) => state.authorization.selectedUser,
-  );
+  // * this is editable state of user
+  const selectedUser: IUser | null = useSelector((state: RootState) => state.users.selectedUser);
+  // * we also clear it's hashed password to set empty field (that dont produce update if we dont text in it)
+  useEffect(() => {
+    dispatch(editSelectedUser({ key: 'password', value: '' }));
+  }, []);
 
+  //* close context-meny of editing
   const handleDeselect = () => {
     dispatch(deselectUser());
     dispatch(setEditingPage());
   };
 
-  const handleSubmit = () => {
-    let user = selectedUser as IUser;
-    if (user.nickname.length === 0) {
-      return alert('why empty nickname');
-    }
-    if (password.length < 6) {
-      user = deletePropertyFromObj(user, user.password);
-    }
-    console.log(user);
-    return dispatch(updUser(user));
+  //* get balance of selected selectedUser
+  const handleGetUserBalance = (id: string) => {
+    dispatch(getUserBalance(id));
   };
 
+  //* Saving changes
+  const handleSubmit = () => {
+    let user = selectedUser as IUser; // we do this for editing with no state-mutation
+
+    try {
+      //* some validatoin before submit
+      // if (user.nickname.length === 0) {
+      //   return alert('Fill that nickname cuhh');
+      // }
+      // if (user.password && user.password.length < 6 && user.password.length !== 0) {
+      //   return alert('Bro pass need at least 8 chars');
+      // }
+      // //* Validation. Backend is dont save data that doesnt exist, the reason we do this to dont save it lol
+      // if (user.password && user.password.length === 0) {
+      //   user = deletePropertyFromObj(user, user.password);
+      // }
+
+      return dispatch(updUser(user));
+    } catch (error) {
+      return alert('some bullshit happend with context meny dude');
+    }
+  };
+
+  //* here we edit currentUser
   const handleEditUser = (key: keyof IUser, value: string | boolean | number) => {
+    //* validate number request
+    if (key === 'balance' && isNaN(Number(value))) {
+      return;
+    } else if (key === 'balance') {
+      value = Number(value); // Преобразуем строку в число
+    }
     dispatch(editSelectedUser({ key, value }));
   };
 
+  const FragmentHiddenBalance = () => {
+    return (
+      <div
+        onClick={() => handleGetUserBalance(selectedUser?._id as string)}
+        className="p-2 w-full my-4 bg-slate-200">
+        {' '}
+        balance{' '}
+      </div>
+    );
+  };
   return (
     <div className="flex justify-center w-screen fixed top-40 left-0">
       <div className="bg-slate-100 p-4 border-2 ">
@@ -51,11 +84,26 @@ export default function UpdUserComponent({}: Props) {
             placeholder="Nickname"
           />
           <input
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={selectedUser?.password}
+            onChange={(e) => handleEditUser('password', e.target.value)}
             className="p-2 w-full my-4 bg-slate-200"
             placeholder="Password"
           />
+
+          {
+            //! BALANCE DISPLAY SECTION
+            selectedUser?.balance === null ? (
+              <FragmentHiddenBalance />
+            ) : (
+              <input
+                value={selectedUser?.balance}
+                onChange={(e) => handleEditUser('balance', e.target.value)}
+                className="p-2 w-full my-4 bg-slate-200"
+                placeholder="Balance"
+              />
+            )
+          }
+
           <div>
             <div className="my-4">
               <span> Type: </span>

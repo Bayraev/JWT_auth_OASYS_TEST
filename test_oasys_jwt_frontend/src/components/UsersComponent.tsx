@@ -16,27 +16,28 @@ export default function UsersComponent() {
   const dispatch: AppDispatch = useDispatch();
   const { currentUser, users } = useSelector((state: RootState) => state.users);
 
-  //* Getting Current User
-  useLayoutEffect(() => {
-    console.log(Cookies.get('token'));
-    const currentUserId: string | any = localStorage.getItem('currentUserId');
-    if (currentUserId && typeof currentUserId === typeof '') {
-      console.log(currentUserId);
+  //* get current user
+  const currentUserId: string | any = localStorage.getItem('currentUserId');
+  useEffect(() => {
+    if (currentUserId) {
       dispatch(getCurrentUserById(currentUserId));
     }
-  }, []);
+  }, [currentUserId]);
 
+  //* get ALL users
   const handleGetUsers = () => {
     dispatch(getUsers());
   };
 
+  //* get user balance
   const handleGetUserBalance = (id: string) => {
     dispatch(getUserBalance(id));
   };
 
+  //* select user for context meny
   const handleSelectUser = (user: IUser) => {
-    dispatch(selectUser(user));
-    dispatch(setEditingPage());
+    dispatch(selectUser(user)); // we put selected to state.currentUser
+    dispatch(setEditingPage()); // we turn on context meny to edit state.currentUser
   };
 
   const FragmentUser: React.FC<IUser> = (user: IUser) => {
@@ -78,7 +79,7 @@ export default function UsersComponent() {
         </div>
 
         {users.map((user: IUser) => {
-          return <FragmentUser {...user} />;
+          return <FragmentUser key={user._id} {...user} />;
         })}
       </div>
     </div>

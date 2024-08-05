@@ -131,16 +131,41 @@ module.exports.userController = {
       res.json(ApiError.BadRequest('Непредвиденная ошибка!'));
     }
   },
-  updUserById: async (req, res) => {
+  updUserById: async (req, res, next) => {
     try {
       const id = req.params.id; // search by id
-      const { nickname, balance, type, lvl } = req.body; // body dude
+      const { nickname, balance, type, lvl, password } = req.body; // body dude
+
+      //* some validation
+      // nickname validation
+      const isNicknameOkay = authServices.isNicknameOkay(nickname);
+      if (!isNicknameOkay) {
+        return next(ApiError.BadRequest('Необходимо ввести никнейм!'));
+      }
+
+      // type and lvl validation
+      const isTypeOkay = authServices.isTypeOkay(type);
+      if (!isTypeOkay) {
+        return next(ApiError.BadRequest('Подозрительный ранг у вас!'));
+      }
+      const isLvlOkay = authServices.isLvlOkay(lvl, type);
+      if (!isLvlOkay) {
+        return next(ApiError.BadRequest('Подозрительный лвл у вас!'));
+      }
+
+      // password validation then hashing if we have it (if we dont, we dont update pass)
+      const isPasswordOkay = authServices.isPasswordOkay(password);
+      let passwordHash = null;
+      if (isPasswordOkay) {
+        passwordHash = await authServices.hashData(password);
+      }
 
       const payload = {}; // describing payload according data
       nickname ? (payload.nickname = nickname) : null;
       balance ? (payload.balance = balance) : null;
       type ? (payload.type = type) : null;
       lvl ? (payload.lvl = lvl) : null;
+      passwordHash ? (payload.password = passwordHash) : null;
 
       const user = await UserModel.findByIdAndUpdate(
         id,
@@ -148,7 +173,7 @@ module.exports.userController = {
         { new: true }, //return updated user in this variable
       );
 
-      res.status(200).json(user);
+      return res.status(200).json(user);
     } catch (error) {
       res.json(ApiError.BadRequest('Непредвиденная ошибка!'));
     }
