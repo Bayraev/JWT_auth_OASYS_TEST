@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { AppDispatch } from '../app/store';
 import { useDispatch } from 'react-redux';
 import { authorization, registration } from '../app/features/AuthSlice';
-import { IUser } from '../app/models/IUser';
 import { IAuthCredentials, IRegCredentials } from '../app/models/IAuth';
 import { setSelectedComponent } from '../app/features/NavigationSlice';
 

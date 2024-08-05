@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../app/store';
 import { IUser } from '../app/models/IUser';
 import { deselectUser, editSelectedUser, getUserBalance, updUser } from '../app/features/UserSlice';
 import { setEditingPage } from '../app/features/NavigationSlice';
-import { deletePropertyFromObj } from '../app/tools/tools';
 
 type Props = {};
 

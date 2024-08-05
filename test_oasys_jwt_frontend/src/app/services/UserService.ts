@@ -1,6 +1,5 @@
 import $api from '../http/http';
 import { AxiosResponse } from 'axios';
-import { IAuthCredentials, IRegCredentials } from '../models/IAuth';
 import { IUser } from '../models/IUser';
 
 export default class UserService {

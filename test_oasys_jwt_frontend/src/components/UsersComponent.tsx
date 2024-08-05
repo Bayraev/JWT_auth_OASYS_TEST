@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../app/store';
 import {
@@ -7,7 +7,6 @@ import {
   getUsers,
   selectUser,
 } from '../app/features/UserSlice';
-import Cookies from 'js-cookie';
 import { IUser } from '../app/models/IUser';
 import { setEditingPage } from '../app/features/NavigationSlice';
 import { Pen } from 'lucide-react';
