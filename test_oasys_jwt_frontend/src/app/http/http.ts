@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { error } from 'console';
 import Cookies from 'js-cookie';
 
 export const API_URL = `http://localhost:4000/api`;
